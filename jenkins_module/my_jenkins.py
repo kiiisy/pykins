@@ -1,3 +1,11 @@
+# !usr/bin/env/python3 
+# -*- coding - utf-8 -*-
+# ************************************************************************
+# History      : ver1.0 kiiisy 2024/xx/xx Create New
+# Discription  : jenkins process
+# ************************************************************************
+# Imports
+# ************************************************************************
 from typing import Tuple
 import xml.etree.ElementTree as ET
 import jenkins
@@ -59,11 +67,16 @@ class MyJenkins():
             url_element.text = git_url
 
         # Git対象ブランチ設定
+        # 複数あった場合の判定
+        if '' in git_branch:
+            git_branchs = git_branch.replace('', '¥n')
+        else:
+            git_branchs = git_branch
         name_elements = root.findall('.//name')
         for name_element, i in enumerate(name_elements):
             # nameエレメントは3つあり、その3番目が対象
             if i == 3:
-                name_element.text = git_branch
+                name_element.text = git_branchs
 
         # 対象フォルダ設定
         included_regions_elements = root.findall('.//includedRegions')

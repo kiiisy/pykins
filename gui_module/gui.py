@@ -1,6 +1,20 @@
-from typing import Tuple
+# !usr/bin/env/python3 
+# -*- coding - utf-8 -*-
+# ************************************************************************
+# History      : ver1.0 kiiisy 2024/xx/xx Create New
+# Discription  : gui process
+# ************************************************************************
+# Imports
+# ************************************************************************
 import customtkinter
+
 from jenkins_module import my_jenkins
+
+
+TAB_VIEW_NAME1 = "Create new job"
+TAB_VIEW_NAME2 = "Edit job"
+TAB_VIEW_NAME3 = "Create AutoSim job"
+TAB_VIEW_NAME4 = "Config"
 
 
 class App(customtkinter.CTk):
@@ -29,25 +43,38 @@ class App(customtkinter.CTk):
         # タブビューフレーム
         tabview = customtkinter.CTkTabview(self, corner_radius=10)
         tabview.grid(row=1, column=1, padx=(15, 15), pady=(0, 0), sticky="ew")
-        tabview.add("create new job")
-        tabview.add("edit job")
-        tabview.add("create auto sim")
-        tabview.tab("create new job").grid_columnconfigure(0, weight=1)
-        tabview.tab("edit job").grid_columnconfigure(0, weight=1)
-        tabview.tab("create auto sim").grid_columnconfigure(0, weight=1)
+        tabview.add(TAB_VIEW_NAME1)
+        tabview.add(TAB_VIEW_NAME2)
+        tabview.add(TAB_VIEW_NAME3)
+        tabview.add(TAB_VIEW_NAME4)
+        tabview.tab(TAB_VIEW_NAME1).grid_columnconfigure(0, weight=1)
+        tabview.tab(TAB_VIEW_NAME2).grid_columnconfigure(0, weight=1)
+        tabview.tab(TAB_VIEW_NAME3).grid_columnconfigure(0, weight=1)
+        tabview.tab(TAB_VIEW_NAME4).grid_columnconfigure(0, weight=1)
 
-        self.input_job_frame = InputJobFrame(tabview.tab("create new job"), self.fonts)
+        # タブビュー(Create new job)
+        self.input_job_frame = InputJobFrame(tabview.tab(TAB_VIEW_NAME1), self.fonts)
         self.input_job_frame.grid(row=0, column=0, padx=10, pady=(10,10), sticky="nsew")
 
-        self.build_day_frame = BuildDayFrame(tabview.tab("create new job"), self.fonts)
+        self.build_day_frame = BuildDayFrame(tabview.tab(TAB_VIEW_NAME1), self.fonts)
         self.build_day_frame.grid(row=1, column=0, padx=10, pady=(10,10), sticky="nsew")
 
-        self.build_time_frame = BuildTimeFrame(tabview.tab("create new job"), self.fonts)
+        self.build_time_frame = BuildTimeFrame(tabview.tab(TAB_VIEW_NAME1), self.fonts)
         self.build_time_frame.grid(row=2, column=0, padx=10, pady=(10,10), sticky="nsew")
 
-        self.create_job_frame = CreateJobFrame(tabview.tab("create new job"), self.fonts,
+        self.create_job_frame = CreateJobFrame(tabview.tab(TAB_VIEW_NAME1), self.fonts,
                                                self.input_job_frame, self.build_day_frame, self.build_time_frame)
         self.create_job_frame.grid(row=3, column=0, padx=10, pady=(10,10), sticky="nsew")
+
+        # タブビュー(Create new job)
+        # T.B.D.
+        # タブビュー(Edit job)
+        # T.B.D.
+        # タブビュー(Create AutoSim job)
+        # T.B.D.
+        # タブビュー(Coonfig)
+        self.config_frame = ConfigFrame(tabview.tab(TAB_VIEW_NAME4), self.fonts)
+        self.config_frame.grid(row=0, column=0, padx=10, pady=(10,10), sticky="nsew")
 
 
 class InputJobFrame(customtkinter.CTkFrame):
@@ -76,7 +103,7 @@ class InputJobFrame(customtkinter.CTkFrame):
         self.teams_url.grid(row=4, column=0, padx=10, pady=(10,10), sticky="ew")
 
        # テキストボックス(対象フォルダ)
-        self.target_folder = customtkinter.CTkEntry(master=self, placeholder_text="Target folder", width=900, font=font)
+        self.target_folder = customtkinter.CTkEntry(master=self, placeholder_text="Target folder(ex. rtl/xxx)", width=900, font=font)
         self.target_folder.grid(row=5, column=0, padx=10, pady=(10,10), sticky="ew")
 
 
@@ -164,7 +191,6 @@ class CreateJobFrame(customtkinter.CTkFrame):
         self.build_time_frame = build_time_frame
         self.font = font
 
-        # Jenkinsモジュール生成
         self.jenkins = my_jenkins.MyJenkins()
 
         # ボタン(job生成)
@@ -193,7 +219,7 @@ class CreateJobFrame(customtkinter.CTkFrame):
         result = self.jenkins.create(job_name, job_desc, git_url, git_branch,
                                      teams_url, target_folder, weekday, build_time)
 
-        text = "完了" if result is True else "失敗"
+        text = "job作成完了" if result is True else "job作成失敗"
 
         self.toplevel_window = None
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
@@ -205,7 +231,17 @@ class ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, master, result, font):
         super().__init__(master)
 
-        self.geometry("200x100")
+        self.geometry("200x100+400+300")
 
         self.label = customtkinter.CTkLabel(self, text=result, font=font)
         self.label.pack(padx=20, pady=30)
+
+
+class ConfigFrame(customtkinter.CTkFrame):
+
+    def __init__(self, master, font):
+        super().__init__(master)
+
+        # テキストボックス(configファイル)
+        self.config_file = customtkinter.CTkEntry(master=self, placeholder_text="config file", width=900, font=font)
+        self.config_file.grid(row=0, column=0, padx=10, pady=(10,10), sticky="ew")

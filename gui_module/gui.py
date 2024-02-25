@@ -1,9 +1,6 @@
-from typing import Any, Tuple
+from typing import Tuple
 import customtkinter
 from jenkins_module import my_jenkins
-
-
-FONT_TYPE = "meiryo"
 
 
 class App(customtkinter.CTk):
@@ -11,10 +8,10 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
-        self.fonts = (FONT_TYPE, 15)
+        self.fonts = ("helvetica", 20)
 
         # サイズ設定
-        self.geometry(f"{1000}x{600}")
+        self.geometry(f"{1000}x{650}")
         self.title("Pykins")
 
         self.grid_columnconfigure(1, weight=1)
@@ -26,8 +23,8 @@ class App(customtkinter.CTk):
 
     def setup_form(self):
         # CustomTkinter のフォームデザイン設定
-        customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
-        customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
+        customtkinter.set_appearance_mode("dark")
+        customtkinter.set_default_color_theme("dark-blue")
 
         # タブビューフレーム
         tabview = customtkinter.CTkTabview(self, corner_radius=10)
@@ -38,7 +35,6 @@ class App(customtkinter.CTk):
         tabview.tab("create new job").grid_columnconfigure(0, weight=1)
         tabview.tab("edit job").grid_columnconfigure(0, weight=1)
         tabview.tab("create auto sim").grid_columnconfigure(0, weight=1)
-
 
         self.input_job_frame = InputJobFrame(tabview.tab("create new job"), self.fonts)
         self.input_job_frame.grid(row=0, column=0, padx=10, pady=(10,10), sticky="nsew")
@@ -84,52 +80,51 @@ class InputJobFrame(customtkinter.CTkFrame):
         self.target_folder.grid(row=5, column=0, padx=10, pady=(10,10), sticky="ew")
 
 
-
 class BuildDayFrame(customtkinter.CTkFrame):
 
     def __init__(self, master, font):
         super().__init__(master)
 
         # ラベル(曜日選択)
-        self.label_day = customtkinter.CTkLabel(master=self, text="ビルド開始曜日", font=customtkinter.CTkFont(size=15, weight="bold"))
+        self.label_day = customtkinter.CTkLabel(master=self, text="ビルド実行曜日", font=customtkinter.CTkFont(size=15, weight="bold"))
         self.label_day.grid(row=1, column=1, padx=(20, 40), pady=(10, 10), sticky="ew")
 
         # チェックボックス
         self.button_sun = customtkinter.CTkCheckBox(master=self, text="Sun",
-                                                      checkbox_height=25,
-                                                      checkbox_width=25,
-                                                      font=("helvetica", 15),
-                                                      corner_radius=50)
+                                                    checkbox_height=25,
+                                                    checkbox_width=25,
+                                                    font=font,
+                                                    corner_radius=50)
         self.button_mon = customtkinter.CTkCheckBox(master=self, text="Mon",
-                                                      checkbox_height=25,
-                                                      checkbox_width=25,
-                                                      font=("helvetica", 15),
-                                                      corner_radius=50)
+                                                    checkbox_height=25,
+                                                    checkbox_width=25,
+                                                    font=font,
+                                                    corner_radius=50)
         self.button_tue = customtkinter.CTkCheckBox(master=self, text="Tue",
-                                                      checkbox_height=25,
-                                                      checkbox_width=25,
-                                                      font=("helvetica", 15),
-                                                      corner_radius=50)
+                                                    checkbox_height=25,
+                                                    checkbox_width=25,
+                                                    font=font,
+                                                    corner_radius=50)
         self.button_wed = customtkinter.CTkCheckBox(master=self, text="Wed",
-                                                      checkbox_height=25,
-                                                      checkbox_width=25,
-                                                      font=("helvetica", 15),
-                                                      corner_radius=50)
+                                                    checkbox_height=25,
+                                                    checkbox_width=25,
+                                                    font=font,
+                                                    corner_radius=50)
         self.button_thu = customtkinter.CTkCheckBox(master=self, text="Thu",
-                                                      checkbox_height=25,
-                                                      checkbox_width=25,
-                                                      font=("helvetica", 15),
-                                                      corner_radius=50)
+                                                    checkbox_height=25,
+                                                    checkbox_width=25,
+                                                    font=font,
+                                                    corner_radius=50)
         self.button_fri = customtkinter.CTkCheckBox(master=self, text="Fri",
-                                                      checkbox_height=25,
-                                                      checkbox_width=25,
-                                                      font=("helvetica", 15),
-                                                      corner_radius=50)
+                                                    checkbox_height=25,
+                                                    checkbox_width=25,
+                                                    font=font,
+                                                    corner_radius=50)
         self.button_sat = customtkinter.CTkCheckBox(master=self, text="Sat",
-                                                      checkbox_height=25,
-                                                      checkbox_width=25,
-                                                      font=("helvetica", 15),
-                                                      corner_radius=50)
+                                                    checkbox_height=25,
+                                                    checkbox_width=25,
+                                                    font=font,
+                                                    corner_radius=50)
 
         self.button_sun.grid(row=1, column=2, padx=(10, 0), pady=(10, 10), sticky="ew")
         self.button_mon.grid(row=1, column=3, padx=(10, 0), pady=(10, 10), sticky="ew")
@@ -151,12 +146,12 @@ class BuildTimeFrame(customtkinter.CTkFrame):
 
         # スライドバー&ラベル
         self.var = customtkinter.IntVar()
-        self.bar_time = customtkinter.CTkSlider(master=self, from_=1, to=24, width=750, height=25, variable=self.var)
+        self.bar_time = customtkinter.CTkSlider(master=self, from_=0, to=23, width=750, height=25, variable=self.var,
+                                                progress_color="DodgerBlue4", button_color="DodgerBlue3")
         self.bar_time.grid(row=0, column=2, pady=(10, 5), padx=10, sticky="ew")
-        self.bar_time.set(1)
-        self.label_bar_time = customtkinter.CTkLabel(master=self, textvariable=self.var, font=("helvetica", 20))
+        self.bar_time.set(0)
+        self.label_bar_time = customtkinter.CTkLabel(master=self, textvariable=self.var, font=font)
         self.label_bar_time.grid(row=1, column=2, pady=(5, 5), padx=10, sticky="ew")
-
 
 
 class CreateJobFrame(customtkinter.CTkFrame):
@@ -167,13 +162,15 @@ class CreateJobFrame(customtkinter.CTkFrame):
         self.input_job_frame = input_job_frame
         self.build_day_frame = build_day_frame
         self.build_time_frame = build_time_frame
+        self.font = font
 
         # Jenkinsモジュール生成
         self.jenkins = my_jenkins.MyJenkins()
 
         # ボタン(job生成)
-        self.botton_job = customtkinter.CTkButton(master=self, text="job作成", width=900, command=self.create_job_callback)
-        self.botton_job.grid(row=0, column=0, padx=(20, 40), pady=(10, 10), sticky="ew")
+        self.botton_job = customtkinter.CTkButton(master=self, text="job作成", font=font, height=40, width=900,
+                                                  fg_color="DodgerBlue3" ,command=self.create_job_callback)
+        self.botton_job.grid(row=0, column=0, padx=(20, 40), pady=(5, 10), sticky="ew")
 
     def create_job_callback(self):
         job_name = self.input_job_frame.job_name.get()
@@ -189,12 +186,26 @@ class CreateJobFrame(customtkinter.CTkFrame):
         is_thu = self.build_day_frame.button_thu.get()
         is_fri = self.build_day_frame.button_fri.get()
         is_sat = self.build_day_frame.button_sat.get()
-        build_time = self.build_time_frame.bar_time.get()
+        build_time = str(round(self.build_time_frame.bar_time.get()))
 
-        self.jenkins.create(job_name, job_desc, git_url, git_branch,
-                            teams_url, target_folder,
-                            is_sun, is_mon, is_tue, is_wed, is_thu, is_fri, is_sat,
-                            build_time)
-        #print(self.input_job_frame.job_name.get())
-        #print(self.build_day_frame.button_sun.get())
-        #print(round(self.build_time_frame.bar_time.get()))
+        weekday = [is_sun, is_mon, is_tue, is_wed, is_thu, is_fri, is_sat]
+
+        result = self.jenkins.create(job_name, job_desc, git_url, git_branch,
+                                     teams_url, target_folder, weekday, build_time)
+
+        text = "完了" if result is True else "失敗"
+
+        self.toplevel_window = None
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window =  self.toplevel_window = ToplevelWindow(self, text, self.font)
+        else:
+            self.toplevel_window.focus()
+
+class ToplevelWindow(customtkinter.CTkToplevel):
+    def __init__(self, master, result, font):
+        super().__init__(master)
+
+        self.geometry("200x100")
+
+        self.label = customtkinter.CTkLabel(self, text=result, font=font)
+        self.label.pack(padx=20, pady=30)

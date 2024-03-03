@@ -1,4 +1,4 @@
-# !usr/bin/env/python3 
+# !usr/bin/env/python3
 # -*- coding - utf-8 -*-
 # ************************************************************************
 # History      : ver1.0 kiiisy 2024/xx/xx Create New
@@ -25,7 +25,7 @@ class App(customtkinter.CTk):
         self.fonts = ("helvetica", 20)
 
         # サイズ設定
-        self.geometry(f"{1000}x{650}")
+        self.geometry(f"{1200}x{650}")
         self.title("Pykins")
 
         self.grid_columnconfigure(1, weight=1)
@@ -52,6 +52,12 @@ class App(customtkinter.CTk):
         tabview.tab(TAB_VIEW_NAME3).grid_columnconfigure(0, weight=1)
         tabview.tab(TAB_VIEW_NAME4).grid_columnconfigure(0, weight=1)
 
+        # スクロールバーフレーム(稼働job)
+        self.job_look_frame = JobLookFrame(master=self, font=self.fonts,
+                                           width=130, height=590, corner_radius=10,
+                                           label_text="稼働job", label_font=self.fonts, label_fg_color="DodgerBlue3")
+        self.job_look_frame.grid(row=1, column=2, padx=(5, 5), pady=(15, 15), sticky="ew")
+
         # タブビュー(Create new job)
         self.input_job_frame = InputJobFrame(tabview.tab(TAB_VIEW_NAME1), self.fonts)
         self.input_job_frame.grid(row=0, column=0, padx=10, pady=(10,10), sticky="nsew")
@@ -66,10 +72,10 @@ class App(customtkinter.CTk):
                                                self.input_job_frame, self.build_day_frame, self.build_time_frame)
         self.create_job_frame.grid(row=3, column=0, padx=10, pady=(10,10), sticky="nsew")
 
-        # タブビュー(Create new job)
-        # T.B.D.
         # タブビュー(Edit job)
-        # T.B.D.
+        self.input_job_frame = InputJobFrame(tabview.tab(TAB_VIEW_NAME2), self.fonts)
+        self.input_job_frame.grid(row=0, column=0, padx=10, pady=(10,10), sticky="nsew")
+
         # タブビュー(Create AutoSim job)
         # T.B.D.
         # タブビュー(Coonfig)
@@ -95,7 +101,7 @@ class InputJobFrame(customtkinter.CTkFrame):
         self.git_url.grid(row=2, column=0, padx=10, pady=(10,10), sticky="ew")
 
        # テキストボックス(Git branch)
-        self.git_branch = customtkinter.CTkEntry(master=self, placeholder_text="Git target branch", width=900, font=font)
+        self.git_branch = customtkinter.CTkEntry(master=self, placeholder_text="Git対象ブランチ", width=900, font=font)
         self.git_branch.grid(row=3, column=0, padx=10, pady=(10,10), sticky="ew")
 
        # テキストボックス(Teams URL)
@@ -103,7 +109,7 @@ class InputJobFrame(customtkinter.CTkFrame):
         self.teams_url.grid(row=4, column=0, padx=10, pady=(10,10), sticky="ew")
 
        # テキストボックス(対象フォルダ)
-        self.target_folder = customtkinter.CTkEntry(master=self, placeholder_text="Target folder(ex. rtl/xxx)", width=900, font=font)
+        self.target_folder = customtkinter.CTkEntry(master=self, placeholder_text="ビルド対象フォルダ(ex. rtl/xxx)", width=900, font=font)
         self.target_folder.grid(row=5, column=0, padx=10, pady=(10,10), sticky="ew")
 
 
@@ -245,3 +251,16 @@ class ConfigFrame(customtkinter.CTkFrame):
         # テキストボックス(configファイル)
         self.config_file = customtkinter.CTkEntry(master=self, placeholder_text="config file", width=900, font=font)
         self.config_file.grid(row=0, column=0, padx=10, pady=(10,10), sticky="ew")
+
+class JobLookFrame(customtkinter.CTkScrollableFrame):
+
+    def __init__(self, master, font, **kwargs):
+        super().__init__(master, **kwargs)
+
+        self.jenkins = my_jenkins.MyJenkins()
+
+        jobs_info = self.jenkins.get_all_job()
+        print(jobs_info)
+
+        #for _ in range(10):
+        #    customtkinter.CTkLabel(master=self, text="サンプル", font=font).pack(pady=10)

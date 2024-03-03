@@ -29,7 +29,7 @@ class MyJenkins():
         result = True
 
         base_job_config = self.base_job_config
-        new_job_config = self.edit(job_name, base_job_config, job_desc, git_url, git_branch,
+        new_job_config = self._edit(job_name, base_job_config, job_desc, git_url, git_branch,
                                     teams_url, target_folder, weekday, build_time)
 
         self.server.create_job(job_name, new_job_config)
@@ -40,7 +40,7 @@ class MyJenkins():
         # T.B.D.
         pass
 
-    def edit(self, job_name: str, config: str, job_desc: str, git_url: str, git_branch: str,
+    def _edit(self, job_name: str, config: str, job_desc: str, git_url: str, git_branch: str,
              teams_url: str, target_folder: str, weekday: Tuple[int], build_time: str) -> str:
         root = ET.fromstring(config)
 
@@ -56,7 +56,7 @@ class MyJenkins():
             defaultvalue_element.text = url
 
         # ビルド日時設定
-        weekday_jenkins = self.conversion_time(weekday, build_time)
+        weekday_jenkins = self._conversion_time(weekday, build_time)
         spec_elements = root.findall('.//spec')
         for spec_element in spec_elements:
             spec_element.text = weekday_jenkins
@@ -90,7 +90,7 @@ class MyJenkins():
 
         return ET.tostring(root, encoding='utf-8').decode('utf-8')
 
-    def conversion_time(self, weekday: Tuple[int], build_time: str) -> str:
+    def _conversion_time(self, weekday: Tuple[int], build_time: str) -> str:
         time = 'H' + ' '
         time = time + build_time + ' '  + '*' + ' ' + '*' + ' '
 
@@ -118,3 +118,6 @@ class MyJenkins():
                 active_days.append(f"{start_day}-{end_day}")
 
         return time + ','.join(active_days)
+
+    def get_all_job(self):
+        return self.server.get_jobs()

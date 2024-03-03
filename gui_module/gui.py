@@ -23,6 +23,7 @@ class App(customtkinter.CTk):
         super().__init__()
 
         self.fonts = ("helvetica", 20)
+        self.fonts2 = ("helvetica", 15)
 
         # サイズ設定
         self.geometry(f"{1200}x{650}")
@@ -52,10 +53,10 @@ class App(customtkinter.CTk):
         tabview.tab(TAB_VIEW_NAME3).grid_columnconfigure(0, weight=1)
         tabview.tab(TAB_VIEW_NAME4).grid_columnconfigure(0, weight=1)
 
-        # スクロールバーフレーム(稼働job)
-        self.job_look_frame = JobLookFrame(master=self, font=self.fonts,
-                                           width=130, height=590, corner_radius=10,
-                                           label_text="稼働job", label_font=self.fonts, label_fg_color="DodgerBlue3")
+        # スクロールバーフレーム(job一覧)
+        self.job_look_frame = JobLookFrame(master=self, font=self.fonts2,
+                                           width=130, height=500, corner_radius=10,
+                                           label_text="job一覧", label_font=self.fonts, label_fg_color="DodgerBlue3")
         self.job_look_frame.grid(row=1, column=2, padx=(5, 5), pady=(15, 15), sticky="ew")
 
         # タブビュー(Create new job)
@@ -222,10 +223,13 @@ class CreateJobFrame(customtkinter.CTkFrame):
 
         weekday = [is_sun, is_mon, is_tue, is_wed, is_thu, is_fri, is_sat]
 
-        result = self.jenkins.create(job_name, job_desc, git_url, git_branch,
-                                     teams_url, target_folder, weekday, build_time)
+        if not job_name or not job_desc or not git_url or not git_branch or not teams_url:
+            text = "パラメータを入力してください"
+        else:
+            result = self.jenkins.create(job_name, job_desc, git_url, git_branch,
+                                         teams_url, target_folder, weekday, build_time)
 
-        text = "job作成完了" if result is True else "job作成失敗"
+            text = "job作成完了" if result is True else "job作成失敗"
 
         self.toplevel_window = None
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
@@ -259,8 +263,7 @@ class JobLookFrame(customtkinter.CTkScrollableFrame):
 
         self.jenkins = my_jenkins.MyJenkins()
 
-        jobs_info = self.jenkins.get_all_job()
-        print(jobs_info)
+        jobs = self.jenkins.get_all_job()
 
-        #for _ in range(10):
-        #    customtkinter.CTkLabel(master=self, text="サンプル", font=font).pack(pady=10)
+        for job in jobs:
+            customtkinter.CTkLabel(master=self, text=job.get('name'), font=font).grid(pady=10, sticky="w")
